@@ -22,34 +22,6 @@
 *{ box-sizing: border-box; }
 
 body{
-  <script>
-(function() {
-    var senhaCorreta = "1010@+";
-    var senhaDigitada = prompt("🔒 Área restrita\nDigite a senha para acessar:");
-
-    if (senhaDigitada !== senhaCorreta) {
-        document.body.innerHTML = `
-            <div style="
-                display:flex;
-                height:100vh;
-                justify-content:center;
-                align-items:center;
-                background:#111;
-                color:#fff;
-                font-family:Arial;
-                text-align:center;
-            ">
-                <div>
-                    <h2>⛔ Acesso Negado</h2>
-                    <p>Senha incorreta.</p>
-                </div>
-            </div>
-        `;
-        throw new Error("Acesso bloqueado");
-    }
-})();
-</script>
-
   margin:0;
   min-height:100vh;
   font-family: Arial, sans-serif;
@@ -2044,4 +2016,5 @@ function fecharOrcamento(){ document.getElementById("orcamentoModal").style.disp
 </script>
 </body>
 </html>
+
 
