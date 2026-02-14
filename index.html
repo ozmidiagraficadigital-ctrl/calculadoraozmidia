@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sistema de Calculadoras para Comunicação Visual</title>
+
+<style>
+/* ===== BASE ===== */
+:root{
+  --bg: #2b2b2b;
+  --panel: #3a3a3a;
+  --panelSoft: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.12);
+  --borderSoft: rgba(255,255,255,0.08);
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.72);
+  --shadow: 0 14px 40px rgba(0,0,0,0.55);
+  --radius: 18px;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 700px at 30% 20%, rgba(255,255,255,0.06), transparent 60%),
+    radial-gradient(900px 600px at 80% 70%, rgba(255,255,255,0.05), transparent 60%),
+    var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 22px;
+}
+
+/* ===== HOME (MENU) ===== */
+.home{
+  width: 100%;
+  max-width: 980px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+
+.homeTop{
+  padding: 22px 22px 16px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+.brandIcon{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255,215,0,0.14);
+  border: 1px solid rgba(255,215,0,0.24);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  letter-spacing: .5px;
+  color: #ffd700;
+}
+.brandText .title{
+  margin:0;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+.brandText .subtitle{
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.homeActions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.badge{
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.18);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.btnAdmin{
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(79,124,255,0.40);
+  background: rgba(79,124,255,0.14);
+  color:#b9ccff;
+  font-weight: 900;
+  cursor:pointer;
+}
+.btnAdmin:hover{ background: rgba(79,124,255,0.20); }
+
+.searchBox{
+  padding: 16px 22px 18px 22px;
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+.searchBox input{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  color: var(--text);
+  outline: none;
+}
+.searchBox input::placeholder{ color: rgba(255,255,255,0.45); }
+
+.grid{
+  padding: 0 22px 22px 22px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.cardBtn{
+  text-align:left;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  cursor:pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  color: var(--text);
+  min-height: 98px;
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+}
+.cardBtn:hover{
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.20);
+}
+.cardTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+}
+.tag{
+  font-size: 11px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.18);
+  color: var(--muted);
+}
+
+/* "Ativa" verde */
+.tagAtiva{
+  background: rgba(0,200,83,0.15);
+  border: 1px solid rgba(0,200,83,0.4);
+  color: #00e676;
+}
+
+.cardTitle{
+  font-weight: 900;
+  letter-spacing: .2px;
+  font-size: 13px;
+}
+.cardDesc{
+  margin:0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.25;
+}
+
+/* ===== CALCULADORA (CARD) ===== */
+.container{
+  display:none;
+  width: 100%;
+  max-width: 520px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+
+.calcHeader{
+  padding: 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+
+.btnVoltar{
+  width: fit-content;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid var(--border);
+  cursor:pointer;
+  color: var(--text);
+  font-weight: bold;
+}
+.btnVoltar:hover{ background: rgba(255,255,255,0.16); }
+
+.calcTitulo h2{
+  margin:0;
+  text-align:center;
+  font-size: 20px;
+  font-weight: 900;
+}
+.calcTitulo p{
+  margin: 6px 0 0 0;
+  text-align:center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.calcBody{
+  padding: 18px;
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+
+.bloco{
+  background: rgba(0,0,0,0.16);
+  border: 1px solid var(--borderSoft);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+label{ font-weight:bold; font-size: 14px; display:block; }
+
+input[type="number"], input[type="text"], select{
+  width:100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin: 8px 0 12px 0;
+  background: rgba(255,255,255,0.92);
+}
+
+.info{ font-size: 12px; color: rgba(255,255,255,0.86); line-height: 1.25; }
+.atencao{ color:#ff4d4d; font-weight:bold; font-size: 14px; }
+.pecaTitulo{ color:#ffd700; font-weight:bold; font-size: 16px; }
+
+.linhaRadios{ display:flex; gap: 16px; align-items:center; margin-top:6px; flex-wrap:wrap; }
+.radioItem{ display:flex; gap: 6px; align-items:center; font-weight:600; }
+
+button{
+  width:100%;
+  padding: 11px;
+  border-radius: 12px;
+  border: none;
+  background: #5c5c5c;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{ background:#707070; }
+
+.btnSecundario{
+  background: rgba(255,255,255,0.10);
+  border: 1px solid var(--border);
+}
+.btnSecundario:hover{ background: rgba(255,255,255,0.16); }
+
+.btnPrimario{ background:#5c5c5c; }
+.btnPrimario:hover{ background:#707070; }
+
+/* ===== MODAIS ===== */
+.modalOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.80);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  overflow: hidden;
+  padding: 20px;
+}
+.modalBox{
+  width: 100%;
+  max-width: 520px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  overflow: visible;
+}
+.modalBox.fitScale{ transform-origin: top center; }
+
+textarea{
+  width: 100%;
+  height: 220px;
+  border-radius: 12px;
+  border:none;
+  padding: 10px;
+  resize: vertical;
+}
+
+/* Marca */
+.marcaTopo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.marcaLogo{
+  width:38px; height:38px;
+  border-radius:12px;
+  background: rgba(255,215,0,0.14);
+  border: 1px solid rgba(255,215,0,0.24);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  color:#ffd700;
+  letter-spacing:.5px;
+}
+.marcaTexto{ line-height: 1.1; text-align:center; }
+.marcaTexto .nome{ font-weight:900; font-size: 14px; }
+.marcaTexto .sub{ font-size: 12px; opacity: .85; }
+
+.btnCopiar{ background:#4f7cff; }
+.btnCopiar:hover{ background:#3d67e6; }
+
+/* Separação profissional dos botões do orçamento */
+.grupoBotoes{
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+  margin: 12px 0;
+}
+.modalBox textarea{ margin: 12px 0; }
+
+/* aviso amarelo para letras pequenas (modal) */
+.avisoAmarelo{
+  border: 1px solid rgba(255,215,0,0.35);
+  background: rgba(255,215,0,0.08);
+  color: #ffd700;
+}
+
+/* corrigir modal letras pequenas */
+#letrasModal .modalBox{
+  background: var(--panel);
+  border: 1px solid rgba(255,215,0,0.35);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin: 0 auto;
+}
+
+/* Organização da composição de custos */
+.costWrap{ margin-top: 10px; }
+.costTitle{
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 900;
+}
+.costGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.costCard{
+  background: rgba(0,0,0,0.16);
+  border: 1px solid var(--borderSoft);
+  border-radius: 14px;
+  padding: 12px;
+}
+.costCard .k{ font-size: 11px; color: rgba(255,255,255,0.70); }
+.costCard .v{ font-size: 13px; font-weight: 900; margin-top: 3px; }
+.costCard .s{ font-size: 11px; color: rgba(255,255,255,0.78); margin-top: 6px; line-height: 1.25; }
+
+.costDetails{
+  margin-top: 10px;
+  background: rgba(0,0,0,0.10);
+  border: 1px solid var(--borderSoft);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.costDetails summary{
+  cursor:pointer;
+  font-weight: 900;
+  font-size: 13px;
+  color: #fff;
+  list-style: none;
+}
+.costDetails summary::-webkit-details-marker{ display:none; }
+.costDetails summary:after{
+  content: "▼";
+  float:right;
+  opacity: .75;
+  font-size: 12px;
+}
+.costDetails[open] summary:after{ content:"▲"; }
+
+.costBody{
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.86);
+  line-height: 1.35;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+}
+.costScroll{
+  max-height: 220px;
+  overflow:auto;
+  padding-right: 6px;
+}
+.costHr{ height:1px; background: rgba(255,255,255,0.10); margin: 10px 0; }
+
+/* ===== PAINEL ADMIN ===== */
+.adminPanel{
+  display:none;
+  width: 100%;
+  max-width: 980px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.adminTop{
+  padding: 18px 22px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+}
+.adminTitle{
+  margin:0;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing:.4px;
+}
+.adminSub{
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.25;
+}
+.adminActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.adminBody{
+  padding: 18px 22px 22px 22px;
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+
+.adminGrid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.adminCard{
+  background: rgba(0,0,0,0.16);
+  border: 1px solid var(--borderSoft);
+  border-radius: 14px;
+  padding: 14px;
+}
+.adminCard h4{
+  margin:0 0 10px 0;
+  font-size: 13px;
+  font-weight: 900;
+}
+.adminHint{
+  margin: -4px 0 10px 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.25;
+}
+
+.adminBtnPrimary{ background:#4f7cff; }
+.adminBtnPrimary:hover{ background:#3d67e6; }
+
+.adminBtnDanger{
+  background: rgba(255,77,77,0.22);
+  border: 1px solid rgba(255,77,77,0.45);
+}
+.adminBtnDanger:hover{ background: rgba(255,77,77,0.30); }
+
+.adminBtnSoft{
+  background: rgba(255,255,255,0.10);
+  border: 1px solid var(--border);
+}
+.adminBtnSoft:hover{ background: rgba(255,255,255,0.16); }
+
+.adminNote{
+  font-size: 12px;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.25;
+  background: rgba(79,124,255,0.10);
+  border: 1px solid rgba(79,124,255,0.25);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+@media (max-width: 920px){
+  .grid{ grid-template-columns: repeat(2, 1fr); }
+  .adminGrid{ grid-template-columns: 1fr; }
+}
+@media (max-width: 560px){
+  body{ padding: 14px; }
+  .homeTop{ flex-direction:column; align-items:flex-start; }
+  .homeActions{ width: 100%; justify-content:space-between; }
+  .grid{ grid-template-columns: 1fr; }
+  .costGrid{ grid-template-columns: 1fr; }
+  .adminTop{ flex-direction:column; }
+  .adminActions{ width:100%; justify-content:space-between; }
+  .modalOverlay{ padding: 14px; }
+}
+
+/* ✅ Rótulo organizado das peças */
+.tituloPeca{
+  font-weight: 900;
+  font-size: 14px;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255,215,0,0.10);
+  border: 1px solid rgba(255,215,0,0.25);
+  color: #ffd700;
+  letter-spacing: .3px;
+}
+
+/* ✅ checkbox desabilitado “bonito” */
+.chkDisabled{
+  opacity: .55;
+  pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME PROFISSIONAL -->
+<section class="home" id="home">
+  <div class="homeTop">
+    <div class="brand">
+      <div class="brandIcon">OZ</div>
+      <div class="brandText">
+        <h1 class="title">SISTEMA DE CALCULADORAS PARA COMUNICAÇÃO VISUAL</h1>
+        <p class="subtitle">Escolha uma calculadora abaixo para gerar valores e orçamento.</p>
+      </div>
+    </div>
+    <div class="homeActions">
+      <button class="btnAdmin" onclick="abrirAdmin()">Acessar Painel Administrativo</button>
+      <div class="badge">Versão: 1.0</div>
+      <div class="badge">100% Responsivo</div>
+    </div>
+  </div>
+
+  <div class="searchBox">
+    <input id="pesquisa" type="text" placeholder="Pesquisar calculadora... (ex: letra caixa, totem, neon)" oninput="filtrarBotoes()" />
+  </div>
+
+  <div class="grid" id="gridCalc">
+    <button class="cardBtn" data-key="letra caixa iluminacao interna iluminado por dentro" onclick="irPara('letraInterna')">
+      <div class="cardTop">
+        <div class="cardTitle">LETRA CAIXA ILUMINAÇÃO INTERNA</div>
+        <span class="tag tagAtiva">Ativa</span>
+      </div>
+      <p class="cardDesc">Calculadora para letra caixa com iluminação interna e orçamento (copia e cola).</p>
+    </button>
+
+    <button class="cardBtn" data-key="letra caixa iluminacao frontal" onclick="irPara('letraFrontal')">
+      <div class="cardTop">
+        <div class="cardTitle">LETRA CAIXA ILUMINAÇÃO FRONTAL</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Estrutura pronta. Vamos criar essa calculadora na sequência.</p>
+    </button>
+
+    <button class="cardBtn" data-key="letra caixa backlight contra luz" onclick="irPara('letraBacklight')">
+      <div class="cardTop">
+        <div class="cardTitle">LETRA CAIXA BACKLIGHT</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Backlight / contra-luz. Ideal para projetos premium.</p>
+    </button>
+
+    <button class="cardBtn" data-key="totem luminoso" onclick="irPara('totem')">
+      <div class="cardTop">
+        <div class="cardTitle">TOTEM LUMINOSO</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Totens e estruturas autoportantes.</p>
+    </button>
+
+    <button class="cardBtn" data-key="fachada acm" onclick="irPara('fachada')">
+      <div class="cardTop">
+        <div class="cardTitle">FACHADA ACM</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Cálculo por metragem e acabamento.</p>
+    </button>
+
+    <button class="cardBtn" data-key="placa simples" onclick="irPara('placa')">
+      <div class="cardTop">
+        <div class="cardTitle">PLACA SIMPLES</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Placas simples para comunicação rápida.</p>
+    </button>
+
+    <button class="cardBtn" data-key="neon led letreiro neon" onclick="irPara('neon')">
+      <div class="cardTop">
+        <div class="cardTitle">LETREIRO NEON LED</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Cálculo para neon flex/led.</p>
+    </button>
+
+    <button class="cardBtn" data-key="letra caixa acrilico" onclick="irPara('acrilico')">
+      <div class="cardTop">
+        <div class="cardTitle">LETRA CAIXA ACRÍLICO</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Letra caixa com frente em acrílico e variações.</p>
+    </button>
+
+    <button class="cardBtn" data-key="painel luminoso" onclick="irPara('painel')">
+      <div class="cardTop">
+        <div class="cardTitle">PAINEL LUMINOSO</div>
+        <span class="tag">Em breve</span>
+      </div>
+      <p class="cardDesc">Painéis iluminados e lightbox.</p>
+    </button>
+
+    <!-- ✅ ADESIVO -->
+    <button class="cardBtn" data-key="adesivo impressao digital recorte por metro quadrado unidade 3x3 4x4 transparente transfer" onclick="irPara('adesivo')">
+      <div class="cardTop">
+        <div class="cardTitle">ADESIVO / IMPRESSÃO DIGITAL</div>
+        <span class="tag tagAtiva">Ativa</span>
+      </div>
+      <p class="cardDesc">Cálculo por m² ou por unidade (cm), com recorte, material e cliente terceirizado.</p>
+    </button>
+  </div>
+</section>
+
+<!-- ✅ PAINEL ADMINISTRATIVO -->
+<section class="adminPanel" id="adminPanel">
+  <div class="adminTop">
+    <div>
+      <h2 class="adminTitle">PAINEL ADMINISTRATIVO</h2>
+      <p class="adminSub">Aqui você altera os parâmetros das calculadoras. As mudanças são salvas no navegador (localStorage).</p>
+    </div>
+    <div class="adminActions">
+      <button class="adminBtnSoft" onclick="voltarHome()">← Voltar</button>
+      <button class="adminBtnPrimary" onclick="salvarConfig()">Salvar Alterações</button>
+      <button class="adminBtnDanger" onclick="restaurarPadrao()">Restaurar Padrão</button>
+    </div>
+  </div>
+
+  <div class="adminBody">
+    <div class="adminNote">
+      ✅ Dica: se quiser testar valores novos sem perder o padrão, altere, clique em <b>Salvar Alterações</b>, faça os testes e depois clique em <b>Restaurar Padrão</b>.
+    </div>
+
+    <!-- LETREIRO -->
+    <div class="adminCard">
+      <h4>Calculadora: LETRA CAIXA (Iluminação Interna)</h4>
+      <p class="adminHint">Parâmetros de custo por m², mínimos e regras internas de peças/descontos.</p>
+
+      <div class="adminGrid">
+        <div>
+          <label>Custo por m² (R$)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_valorM2">
+        </div>
+        <div>
+          <label>Valor mínimo absoluto (R$)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_valorMinimo">
+        </div>
+
+        <div>
+          <label>Acréscimo Peça 02+ (ex: 0.10 = 10%)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_acrescimoPecaExtra">
+        </div>
+        <div>
+          <label>Regra “mínimo por faixa” (multiplicador fixo)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_faixaMultiplicador" placeholder="Padrão: 0.42">
+        </div>
+
+        <div>
+          <label>Faixa até 0,50m → valor (R$)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_faixa_050_valor">
+        </div>
+        <div>
+          <label>Faixa até 0,70m → valor (R$)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_faixa_070_valor">
+        </div>
+
+        <div>
+          <label>Faixa até 1,00m → valor (R$)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_faixa_100_valor">
+        </div>
+        <div>
+          <label>Letras pequenas (padrão %) (ex: 0.15 = 15%)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_letrasPequenasPadrao">
+        </div>
+
+        <div>
+          <label>Desconto: a partir de 1,5m² (ex: 0.10 = 10%)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_desc_15">
+        </div>
+        <div>
+          <label>Desconto: a partir de 2m² (ex: 0.15 = 15%)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_desc_20">
+        </div>
+
+        <div>
+          <label>Desconto: a partir de 3m² (ex: 0.20 = 20%)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_desc_30">
+        </div>
+        <div>
+          <label>Desconto: a partir de 4m² (ex: 0.25 = 25%)</label>
+          <input type="number" step="0.01" id="cfg_letreiro_desc_40">
+        </div>
+      </div>
+    </div>
+
+    <!-- ADESIVO (admin só do Branco Leitoso) -->
+    <div class="adminCard">
+      <h4>Calculadora: ADESIVO / IMPRESSÃO DIGITAL</h4>
+      <p class="adminHint">Parâmetros do adesivo <b>Branco Leitoso</b>. (Transparente e Transfer usam tabela fixa do sistema.)</p>
+
+      <div class="adminGrid">
+        <div>
+          <label>Preço padrão sem recorte (R$/m²)</label>
+          <input type="number" step="0.01" id="cfg_adesivo_padrao_semRecorte">
+        </div>
+        <div>
+          <label>Preço padrão com recorte (R$/m²)</label>
+          <input type="number" step="0.01" id="cfg_adesivo_padrao_comRecorte">
+        </div>
+
+        <div>
+          <label>Preço terceirizado sem recorte (R$/m²)</label>
+          <input type="number" step="0.01" id="cfg_adesivo_terc_semRecorte">
+        </div>
+        <div>
+          <label>Preço terceirizado com recorte (R$/m²)</label>
+          <input type="number" step="0.01" id="cfg_adesivo_terc_comRecorte">
+        </div>
+
+        <div>
+          <label>Mínimo cliente final sem recorte (R$)</label>
+          <input type="number" step="0.01" id="cfg_adesivo_min_semRecorte">
+        </div>
+        <div>
+          <label>Mínimo cliente final com recorte (R$)</label>
+          <input type="number" step="0.01" id="cfg_adesivo_min_comRecorte">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULADORA 1 - LETREIRO -->
+<section class="container" id="calcLetraInterna">
+  <div class="calcHeader">
+    <button class="btnVoltar" onclick="voltarHome()">← Voltar</button>
+    <div class="calcTitulo">
+      <h2>Calculadora de Letreiro</h2>
+      <p>Iluminado por Dentro</p>
+    </div>
+  </div>
+
+  <div class="calcBody">
+    <div id="medidasContainer">
+      <div class="medida bloco">
+        <div class="tituloPeca">Peça 01 — Maior Medida</div>
+
+        <label>Largura (em metros)</label>
+        <input type="number" step="0.01" class="largura">
+
+        <label>Altura (em metros)</label>
+        <input type="number" step="0.01" class="altura">
+      </div>
+    </div>
+
+    <button class="btnSecundario" onclick="adicionarMedida()">+ Adicionar Peça do Letreiro</button>
+
+    <div class="bloco">
+      <label>Aplicar desconto automático por metragem?</label>
+      <div class="linhaRadios">
+        <label class="radioItem"><input type="radio" name="desconto" value="nao" checked> Não</label>
+        <label class="radioItem"><input type="radio" name="desconto" value="sim"> Sim</label>
+      </div>
+
+      <div class="info" style="margin-top:10px;">
+        1,5m² → 10%<br>
+        2m² → 15%<br>
+        3m² → 20%<br>
+        4m² → 25%
+      </div>
+    </div>
+
+    <button class="btnPrimario" onclick="calcular()">Calcular</button>
+
+    <div class="bloco info">
+      Regras:<br>
+      Até 0,50m → R$ 690<br>
+      Até 0,70m → R$ 890<br>
+      Até 1,00m → R$ 1.190<br>
+      Acima disso → R$ 2.800/m²
+    </div>
+  </div>
+</section>
+
+<!-- ✅ CALCULADORA 2 - ADESIVO -->
+<section class="container" id="calcAdesivo">
+  <div class="calcHeader">
+    <button class="btnVoltar" onclick="voltarHome()">← Voltar</button>
+    <div class="calcTitulo">
+      <h2>Calculadora de Adesivos</h2>
+      <p>Impressão Digital</p>
+    </div>
+  </div>
+
+  <div class="calcBody">
+    <div class="bloco">
+      <label>Tipo de cálculo</label>
+      <select id="adesivoTipo" onchange="toggleAdesivoTipo()">
+        <option value="metro">Adesivo por m²</option>
+        <option value="unidade">Adesivo por Unidade (cm)</option>
+      </select>
+
+      <label style="margin-top:10px;">Material do adesivo</label>
+      <select id="adesivoMaterial" onchange="onChangeMaterialAdesivo()">
+        <option value="branco" selected>Branco Leitoso</option>
+        <option value="transparente">Transparente</option>
+        <option value="transfer">Cor Única com Transfer</option>
+      </select>
+
+      <label id="wrapRecorte" style="margin-top:6px;"><input type="checkbox" id="adesivoRecorte"> Com recorte</label>
+      <label style="margin-top:6px;"><input type="checkbox" id="adesivoTerceirizado"> Cliente terceirizado</label>
+
+      <div class="info" style="margin-top:8px;">
+        <b>Branco Leitoso</b><br>
+        • Cliente final (m²): R$ 60,00 / com recorte: R$ 65,00<br>
+        • Mínimo cliente final: R$ 40,00 / com recorte: R$ 45,00<br>
+        • Terceirizado (m²): R$ 30,00 / com recorte: R$ 45,00<br>
+        • Mínimo terceirizado: R$ 30,00 / com recorte: R$ 45,00<br><br>
+
+        <b>Transparente</b><br>
+        • Cliente final (m²): R$ 70,00 / com recorte: R$ 85,00<br>
+        • Mínimo cliente final: R$ 50,00 / com recorte: R$ 60,00<br>
+        • Terceirizado (m²): R$ 40,00 / com recorte: R$ 55,00<br>
+        • Mínimo terceirizado: R$ 40,00 / com recorte: R$ 55,00<br><br>
+
+        <b>Cor Única com Transfer</b><br>
+        • Cliente final (m²): R$ 95,00 • Mínimo: R$ 50,00<br>
+        • Terceirizado (m²): R$ 70,00 • Mínimo: R$ 70,00<br>
+        • (Sem recorte nessa opção)<br><br>
+
+        • Unidade (cm): sempre converte para m²
+      </div>
+    </div>
+
+    <!-- POR METRO -->
+    <div class="bloco" id="boxAdesivoMetro">
+      <label>Largura (em metros)</label>
+      <input type="number" step="0.01" id="adesivoLargM" placeholder="Ex: 1.20">
+      <label>Altura (em metros)</label>
+      <input type="number" step="0.01" id="adesivoAltM" placeholder="Ex: 0.80">
+      <label>Quantidade (opcional)</label>
+      <input type="number" step="1" id="adesivoQtdMetro" placeholder="Ex: 1">
+      <div class="info">Se tiver mais de 1 painel igual, coloque a quantidade.</div>
+    </div>
+
+    <!-- POR UNIDADE -->
+    <div class="bloco" id="boxAdesivoUnidade" style="display:none;">
+      <label>Largura (em cm)</label>
+      <input type="number" step="0.1" id="adesivoLargCm" placeholder="Ex: 3">
+      <label>Altura (em cm)</label>
+      <input type="number" step="0.1" id="adesivoAltCm" placeholder="Ex: 3">
+      <label>Quantidade</label>
+      <input type="number" step="1" id="adesivoQtdUni" placeholder="Ex: 100">
+      <div class="info">
+        Cálculo por área real informada (ex: 3x3, 4x4, 5x5) convertida para m².
+      </div>
+    </div>
+
+    <button class="btnPrimario" onclick="calcularAdesivo()">Calcular</button>
+
+    <div class="bloco info">
+      <b>Branco:</b> CF 60/65 • Terc 30/45 • Mín CF 40/45 • Mín Terc 30/45<br>
+      <b>Transparente:</b> CF 70/85 • Terc 40/55 • Mín CF 50/60 • Mín Terc 40/55<br>
+      <b>Transfer:</b> CF 95 (mín 50) • Terc 70 (mín 70)
+    </div>
+  </div>
+</section>
+
+<!-- MODAL RESUMO -->
+<div class="modalOverlay" id="modal">
+  <div class="modalBox" id="modalContent"></div>
+</div>
+
+<!-- MODAL ORÇAMENTO -->
+<div class="modalOverlay" id="orcamentoModal">
+  <div class="modalBox">
+    <div class="marcaTopo">
+      <div class="marcaLogo">OZ</div>
+      <div class="marcaTexto">
+        <div class="nome">OZ MÍDIA</div>
+        <div class="sub">Comunicação Visual</div>
+      </div>
+    </div>
+
+    <h3>Informações do Orçamento</h3>
+
+    <label>Valor do Frete (R$)</label>
+    <input type="number" id="freteValor" step="0.01">
+
+    <label>Prazo de Produção (apenas número)</label>
+    <input type="number" id="prazoProducao" placeholder="Ex: 7" step="1">
+
+    <div class="grupoBotoes">
+      <button onclick="gerarTextoOrcamento()">Gerar Texto</button>
+      <button class="btnCopiar" onclick="copiarTexto()">Copiar Texto</button>
+    </div>
+
+    <textarea id="textoOrcamento"></textarea>
+
+    <div class="grupoBotoes">
+      <button onclick="fecharOrcamento()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LETRAS PEQUENAS -->
+<div class="modalOverlay" id="letrasModal">
+  <div class="modalBox avisoAmarelo">
+    <h3 style="text-align:center; margin: 0 0 12px 0;">Esse letreiro contém muitas letras pequenas?</h3>
+
+    <div class="linhaRadios">
+      <label class="radioItem">
+        <input type="radio" name="letrasPequenasModal" value="nao" checked onchange="toggleLetrasPequenasModal()">
+        Não
+      </label>
+      <label class="radioItem">
+        <input type="radio" name="letrasPequenasModal" value="sim" onchange="toggleLetrasPequenasModal()">
+        Sim
+      </label>
+    </div>
+
+    <div class="info" style="margin-top:10px;">
+      Se <b>Sim</b>, aplicaremos de <b>10% a 20%</b> a mais <b>nas peças menores</b> para compensar as letras pequenas.
+    </div>
+
+    <label style="margin-top:10px;">Acréscimo nas peças menores</label>
+    <select id="percentLetrasModal" disabled>
+      <option value="10">10%</option>
+      <option value="15" selected>15%</option>
+      <option value="20">20%</option>
+    </select>
+
+    <div class="grupoBotoes">
+      <button onclick="aplicarLetrasPequenas()">Aplicar</button>
+      <button class="btnSecundario" onclick="fecharLetrasModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ MODAL TRANSFER (NOVO) -->
+<div class="modalOverlay" id="transferModal">
+  <div class="modalBox avisoAmarelo">
+    <h3 style="text-align:center; margin: 0 0 12px 0;">Cor Única com Transfer</h3>
+
+    <div class="info" style="margin-top:6px;">
+      Verifique se tem a <b>cor desse adesivo</b> na loja.<br>
+      Você <b>tem a cor</b> disponível?
+    </div>
+
+    <div class="linhaRadios" style="margin-top:10px;">
+      <label class="radioItem">
+        <input type="radio" name="transferTemCor" value="sim" checked onchange="toggleTransferTemCor()">
+        Sim
+      </label>
+      <label class="radioItem">
+        <input type="radio" name="transferTemCor" value="nao" onchange="toggleTransferTemCor()">
+        Não
+      </label>
+    </div>
+
+    <div id="transferCampos" style="display:none; margin-top:10px;">
+      <div class="info" style="margin-bottom:8px;">
+        Sem a cor em estoque: informe o <b>valor do metro²</b> do adesivo e o <b>frete do motoboy</b> para buscar.
+      </div>
+
+      <label>Valor do m² do adesivo (R$)</label>
+      <input type="number" step="0.01" id="transferPrecoM2" placeholder="Ex: 110.00">
+
+      <label>Frete do motoboy (R$)</label>
+      <input type="number" step="0.01" id="transferMotoboy" placeholder="Ex: 25.00">
+    </div>
+
+    <div class="grupoBotoes">
+      <button onclick="confirmarTransfer()">Continuar</button>
+      <button class="btnSecundario" onclick="fecharTransferModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   FIT MODAL - CABER NA TELA SEM ROLAGEM
+========================================================= */
+function aplicarFitModal(overlayId){
+  const overlay = document.getElementById(overlayId);
+  if(!overlay || overlay.style.display !== "flex") return;
+
+  const box = overlay.querySelector(".modalBox");
+  if(!box) return;
+
+  box.classList.remove("fitScale");
+  box.style.transform = "none";
+
+  const pad = 40;
+  const availH = window.innerHeight - pad;
+  const availW = window.innerWidth - pad;
+
+  const rect = box.getBoundingClientRect();
+  let scaleH = availH / rect.height;
+  let scaleW = availW / rect.width;
+  let scale = Math.min(1, scaleH, scaleW);
+
+  if(scale < 1){
+    box.classList.add("fitScale");
+    scale = Math.max(0.55, scale);
+    box.style.transform = `scale(${scale})`;
+  }
+}
+function aplicarFitTodosAbertos(){
+  aplicarFitModal("modal");
+  aplicarFitModal("orcamentoModal");
+  aplicarFitModal("letrasModal");
+  aplicarFitModal("transferModal");
+}
+window.addEventListener("resize", () => requestAnimationFrame(aplicarFitTodosAbertos));
+
+/* =========================================================
+   CONFIG
+========================================================= */
+const CONFIG_PADRAO = {
+  letreiro: {
+    valorM2: 2800,
+    valorMinimo: 690,
+    acrescimoPecaExtra: 0.10,
+    faixaMultiplicador: 0.42,
+    faixas: { "0.50": 690, "0.70": 890, "1.00": 1190 },
+    letrasPequenasPadrao: 0.15,
+    descontos: { "1.5": 0.10, "2": 0.15, "3": 0.20, "4": 0.25 }
+  },
+  adesivo: {
+    /* Branco Leitoso (admin) */
+    padrao: { semRecorte: 60, comRecorte: 65 },
+    terceirizado: { semRecorte: 30, comRecorte: 45 },
+    minimo: { semRecorte: 40, comRecorte: 45 },
+
+    /* mínimos terceirizado (fixo) */
+    minimoTerceirizado: { semRecorte: 30, comRecorte: 45 },
+
+    /* Transparente (fixo) */
+    transparente: {
+      padrao: { semRecorte: 70, comRecorte: 85 },
+      terceirizado: { semRecorte: 40, comRecorte: 55 },
+      minimo: { semRecorte: 50, comRecorte: 60 },
+      minimoTerceirizado: { semRecorte: 40, comRecorte: 55 }
+    },
+
+    /* ✅ Transfer (fixo) - sem recorte */
+    transfer: {
+      padraoM2: 95,
+      terceirizadoM2: 70,
+      minimo: 50,
+      minimoTerceirizado: 70
+    }
+  }
+};
+
+let CONFIG = carregarConfig();
+
+/* =========================================================
+   HOME / NAVEGAÇÃO
+========================================================= */
+function irPara(tipo){
+  if(tipo === "letraInterna"){
+    document.getElementById("home").style.display = "none";
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("calcLetraInterna").style.display = "block";
+    document.getElementById("calcAdesivo").style.display = "none";
+    window.scrollTo(0,0);
+  }else if(tipo === "adesivo"){
+    document.getElementById("home").style.display = "none";
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("calcLetraInterna").style.display = "none";
+    document.getElementById("calcAdesivo").style.display = "block";
+    window.scrollTo(0,0);
+    onChangeMaterialAdesivo(); /* garante recorte correto */
+  }else{
+    alert("Essa calculadora ainda será criada 😎");
+  }
+}
+
+function voltarHome(){
+  document.getElementById("calcLetraInterna").style.display = "none";
+  document.getElementById("calcAdesivo").style.display = "none";
+  document.getElementById("adminPanel").style.display = "none";
+  document.getElementById("home").style.display = "block";
+  window.scrollTo(0,0);
+}
+
+/* Pesquisa Home */
+function filtrarBotoes(){
+  const q = (document.getElementById("pesquisa").value || "").toLowerCase().trim();
+  const cards = document.querySelectorAll("#gridCalc .cardBtn");
+  cards.forEach(c=>{
+    const key = (c.getAttribute("data-key") || "").toLowerCase();
+    c.style.display = (key.includes(q) || q === "") ? "flex" : "none";
+  });
+}
+
+/* =========================================================
+   PAINEL ADMIN
+========================================================= */
+function abrirAdmin(){
+  document.getElementById("home").style.display = "none";
+  document.getElementById("calcLetraInterna").style.display = "none";
+  document.getElementById("calcAdesivo").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
+  window.scrollTo(0,0);
+  preencherAdminComConfig();
+}
+
+function preencherAdminComConfig(){
+  /* Letreiro */
+  document.getElementById("cfg_letreiro_valorM2").value = CONFIG.letreiro.valorM2;
+  document.getElementById("cfg_letreiro_valorMinimo").value = CONFIG.letreiro.valorMinimo;
+  document.getElementById("cfg_letreiro_acrescimoPecaExtra").value = CONFIG.letreiro.acrescimoPecaExtra;
+  document.getElementById("cfg_letreiro_faixaMultiplicador").value = CONFIG.letreiro.faixaMultiplicador;
+
+  document.getElementById("cfg_letreiro_faixa_050_valor").value = CONFIG.letreiro.faixas["0.50"];
+  document.getElementById("cfg_letreiro_faixa_070_valor").value = CONFIG.letreiro.faixas["0.70"];
+  document.getElementById("cfg_letreiro_faixa_100_valor").value = CONFIG.letreiro.faixas["1.00"];
+
+  document.getElementById("cfg_letreiro_letrasPequenasPadrao").value = CONFIG.letreiro.letrasPequenasPadrao;
+
+  document.getElementById("cfg_letreiro_desc_15").value = CONFIG.letreiro.descontos["1.5"];
+  document.getElementById("cfg_letreiro_desc_20").value = CONFIG.letreiro.descontos["2"];
+  document.getElementById("cfg_letreiro_desc_30").value = CONFIG.letreiro.descontos["3"];
+  document.getElementById("cfg_letreiro_desc_40").value = CONFIG.letreiro.descontos["4"];
+
+  /* Adesivo (Branco Leitoso) */
+  document.getElementById("cfg_adesivo_padrao_semRecorte").value = CONFIG.adesivo.padrao.semRecorte;
+  document.getElementById("cfg_adesivo_padrao_comRecorte").value = CONFIG.adesivo.padrao.comRecorte;
+  document.getElementById("cfg_adesivo_terc_semRecorte").value = CONFIG.adesivo.terceirizado.semRecorte;
+  document.getElementById("cfg_adesivo_terc_comRecorte").value = CONFIG.adesivo.terceirizado.comRecorte;
+  document.getElementById("cfg_adesivo_min_semRecorte").value = CONFIG.adesivo.minimo.semRecorte;
+  document.getElementById("cfg_adesivo_min_comRecorte").value = CONFIG.adesivo.minimo.comRecorte;
+}
+
+function salvarConfig(){
+  /* Letreiro */
+  CONFIG.letreiro.valorM2 = num("cfg_letreiro_valorM2", CONFIG_PADRAO.letreiro.valorM2);
+  CONFIG.letreiro.valorMinimo = num("cfg_letreiro_valorMinimo", CONFIG_PADRAO.letreiro.valorMinimo);
+  CONFIG.letreiro.acrescimoPecaExtra = num("cfg_letreiro_acrescimoPecaExtra", CONFIG_PADRAO.letreiro.acrescimoPecaExtra);
+  CONFIG.letreiro.faixaMultiplicador = num("cfg_letreiro_faixaMultiplicador", CONFIG_PADRAO.letreiro.faixaMultiplicador);
+
+  CONFIG.letreiro.faixas["0.50"] = num("cfg_letreiro_faixa_050_valor", CONFIG_PADRAO.letreiro.faixas["0.50"]);
+  CONFIG.letreiro.faixas["0.70"] = num("cfg_letreiro_faixa_070_valor", CONFIG_PADRAO.letreiro.faixas["0.70"]);
+  CONFIG.letreiro.faixas["1.00"] = num("cfg_letreiro_faixa_100_valor", CONFIG_PADRAO.letreiro.faixas["1.00"]);
+
+  CONFIG.letreiro.letrasPequenasPadrao = num("cfg_letreiro_letrasPequenasPadrao", CONFIG_PADRAO.letreiro.letrasPequenasPadrao);
+
+  CONFIG.letreiro.descontos["1.5"] = num("cfg_letreiro_desc_15", CONFIG_PADRAO.letreiro.descontos["1.5"]);
+  CONFIG.letreiro.descontos["2"] = num("cfg_letreiro_desc_20", CONFIG_PADRAO.letreiro.descontos["2"]);
+  CONFIG.letreiro.descontos["3"] = num("cfg_letreiro_desc_30", CONFIG_PADRAO.letreiro.descontos["3"]);
+  CONFIG.letreiro.descontos["4"] = num("cfg_letreiro_desc_40", CONFIG_PADRAO.letreiro.descontos["4"]);
+
+  /* Adesivo (Branco Leitoso) */
+  CONFIG.adesivo.padrao.semRecorte = num("cfg_adesivo_padrao_semRecorte", CONFIG_PADRAO.adesivo.padrao.semRecorte);
+  CONFIG.adesivo.padrao.comRecorte = num("cfg_adesivo_padrao_comRecorte", CONFIG_PADRAO.adesivo.padrao.comRecorte);
+  CONFIG.adesivo.terceirizado.semRecorte = num("cfg_adesivo_terc_semRecorte", CONFIG_PADRAO.adesivo.terceirizado.semRecorte);
+  CONFIG.adesivo.terceirizado.comRecorte = num("cfg_adesivo_terc_comRecorte", CONFIG_PADRAO.adesivo.terceirizado.comRecorte);
+  CONFIG.adesivo.minimo.semRecorte = num("cfg_adesivo_min_semRecorte", CONFIG_PADRAO.adesivo.minimo.semRecorte);
+  CONFIG.adesivo.minimo.comRecorte = num("cfg_adesivo_min_comRecorte", CONFIG_PADRAO.adesivo.minimo.comRecorte);
+
+  localStorage.setItem("OZ_CFG", JSON.stringify(CONFIG));
+  alert("Configurações salvas com sucesso!");
+}
+
+function restaurarPadrao(){
+  CONFIG = JSON.parse(JSON.stringify(CONFIG_PADRAO));
+  localStorage.setItem("OZ_CFG", JSON.stringify(CONFIG));
+  preencherAdminComConfig();
+  letrasPequenasPercent = CONFIG.letreiro.letrasPequenasPadrao;
+  alert("Padrão restaurado com sucesso!");
+}
+
+function carregarConfig(){
+  try{
+    const raw = localStorage.getItem("OZ_CFG");
+    if(!raw) return JSON.parse(JSON.stringify(CONFIG_PADRAO));
+    const parsed = JSON.parse(raw);
+
+    const cfg = JSON.parse(JSON.stringify(CONFIG_PADRAO));
+    if(parsed && typeof parsed === "object"){
+      if(parsed.letreiro) cfg.letreiro = Object.assign(cfg.letreiro, parsed.letreiro);
+      if(parsed.letreiro && parsed.letreiro.faixas) cfg.letreiro.faixas = Object.assign(cfg.letreiro.faixas, parsed.letreiro.faixas);
+      if(parsed.letreiro && parsed.letreiro.descontos) cfg.letreiro.descontos = Object.assign(cfg.letreiro.descontos, parsed.letreiro.descontos);
+
+      if(parsed.adesivo) cfg.adesivo = Object.assign(cfg.adesivo, parsed.adesivo);
+      if(parsed.adesivo && parsed.adesivo.padrao) cfg.adesivo.padrao = Object.assign(cfg.adesivo.padrao, parsed.adesivo.padrao);
+      if(parsed.adesivo && parsed.adesivo.terceirizado) cfg.adesivo.terceirizado = Object.assign(cfg.adesivo.terceirizado, parsed.adesivo.terceirizado);
+      if(parsed.adesivo && parsed.adesivo.minimo) cfg.adesivo.minimo = Object.assign(cfg.adesivo.minimo, parsed.adesivo.minimo);
+    }
+    return cfg;
+  }catch(e){
+    return JSON.parse(JSON.stringify(CONFIG_PADRAO));
+  }
+}
+
+function num(id, fallback){
+  const el = document.getElementById(id);
+  const v = parseFloat(el ? el.value : "");
+  return (isNaN(v) ? fallback : v);
+}
+
+/* =========================================================
+   VARIÁVEIS / ORÇAMENTO
+========================================================= */
+let dadosUltimoCalculo = {};
+
+/* =========================================================
+   LETREIRO
+========================================================= */
+let letrasPequenasAtivo = false;
+let letrasPequenasPercent = CONFIG.letreiro.letrasPequenasPadrao;
+
+function adicionarMedida(){
+  const container = document.getElementById("medidasContainer");
+  const total = container.querySelectorAll(".medida").length + 1;
+
+  let div = document.createElement("div");
+  div.className = "medida bloco";
+  div.innerHTML = `
+    <div class="tituloPeca">Peça ${String(total).padStart(2,'0')} — Peça Menor</div>
+    <label>Largura (em metros)</label>
+    <input type="number" step="0.01" class="largura">
+    <label>Altura (em metros)</label>
+    <input type="number" step="0.01" class="altura">
+  `;
+  container.appendChild(div);
+
+  if(total > 2){
+    abrirLetrasModal();
+  }
+}
+
+function abrirLetrasModal(){
+  const sim = letrasPequenasAtivo === true;
+
+  const radioNao = document.querySelector('input[name="letrasPequenasModal"][value="nao"]');
+  const radioSim = document.querySelector('input[name="letrasPequenasModal"][value="sim"]');
+  if(radioNao && radioSim){
+    radioNao.checked = !sim;
+    radioSim.checked = sim;
+  }
+
+  const sel = document.getElementById("percentLetrasModal");
+  if(sel){
+    const percAtual = Math.round(letrasPequenasPercent * 100);
+    const opt = Array.from(sel.options).find(o => parseInt(o.value,10) === percAtual);
+    if(opt) sel.value = String(percAtual);
+    sel.disabled = !sim;
+  }
+
+  document.getElementById("letrasModal").style.display = "flex";
+  requestAnimationFrame(()=>aplicarFitModal("letrasModal"));
+}
+function fecharLetrasModal(){ document.getElementById("letrasModal").style.display = "none"; }
+function toggleLetrasPequenasModal(){
+  const sim = document.querySelector('input[name="letrasPequenasModal"]:checked').value === "sim";
+  document.getElementById("percentLetrasModal").disabled = !sim;
+}
+function aplicarLetrasPequenas(){
+  const sim = document.querySelector('input[name="letrasPequenasModal"]:checked').value === "sim";
+  letrasPequenasAtivo = sim;
+
+  const sel = document.getElementById("percentLetrasModal");
+  const perc = sel ? (parseInt(sel.value, 10) / 100) : CONFIG.letreiro.letrasPequenasPadrao;
+  letrasPequenasPercent = perc;
+
+  fecharLetrasModal();
+}
+
+/* =========================================================
+   CALC LETREIRO
+========================================================= */
+function calcular(){
+  const valorM2 = CONFIG.letreiro.valorM2;
+  const valorMinimo = CONFIG.letreiro.valorMinimo;
+  const acrescimoPecaExtraCfg = CONFIG.letreiro.acrescimoPecaExtra;
+
+  let larguras = document.querySelectorAll(".largura");
+  let alturas = document.querySelectorAll(".altura");
+  let aplicarDesconto = document.querySelector('input[name="desconto"]:checked').value === "sim";
+
+  let totalArea = 0;
+  let resumo = "";
+  let listaMedidas = [];
+  let areas = [];
+
+  for(let i=0;i<larguras.length;i++){
+    let largura = parseFloat(larguras[i].value);
+    let altura = parseFloat(alturas[i].value);
+    if(!largura || !altura){ alert("Preencha todas as medidas"); return; }
+
+    let area = largura*altura;
+    totalArea += area;
+
+    areas.push(area);
+    listaMedidas.push(`${largura}m x ${altura}m`);
+
+    let numero = String(i+1).padStart(2,'0');
+    resumo += `<div class="pecaTitulo">Peça ${numero} do Letreiro</div>`;
+    resumo += `${largura}m x ${altura}m = ${area.toFixed(2)} m²<br><br>`;
+  }
+
+  const maxArea = Math.max.apply(null, areas);
+
+  let composicaoLinhas = "";
+  let valorCalculado = 0;
+
+  for(let i=0;i<areas.length;i++){
+    const areaP = areas[i];
+    const base = areaP * valorM2;
+
+    const acrescimoPecaExtra = (i !== 0) ? acrescimoPecaExtraCfg : 0;
+    const aplicaLetras = (letrasPequenasAtivo && areaP < maxArea);
+    const acrescimoLetras = aplicaLetras ? letrasPequenasPercent : 0;
+
+    let custo = base;
+    if(acrescimoPecaExtra > 0) custo *= (1 + acrescimoPecaExtra);
+    if(acrescimoLetras > 0) custo *= (1 + acrescimoLetras);
+
+    valorCalculado += custo;
+
+    let numero = String(i+1).padStart(2,'0');
+    let linha = `<b>Peça ${numero}</b> (${areaP.toFixed(2)} m²)<br>`;
+    linha += `• Base: ${areaP.toFixed(2)} x R$ ${valorM2.toFixed(2)} = R$ ${base.toFixed(2)}<br>`;
+    linha += (acrescimoPecaExtra > 0)
+      ? `• Acréscimo peça adicional: +${Math.round(acrescimoPecaExtra*100)}%<br>`
+      : `• Peça 01: sem acréscimo de peça adicional<br>`;
+    linha += (acrescimoLetras > 0)
+      ? `• Letras pequenas (peça menor): +${Math.round(acrescimoLetras*100)}%<br>`
+      : `• Letras pequenas: não aplicado<br>`;
+    linha += `<b>Subtotal: R$ ${custo.toFixed(2)}</b><br><br>`;
+    composicaoLinhas += linha;
+  }
+
+  const valorAntesMinimoArea = valorCalculado;
+
+  let valorAposMinimoArea = valorCalculado;
+  let minimoAreaAplicado = false;
+  let minimoAreaValor = 0;
+  let minimoAreaMotivo = "";
+
+  const mult = CONFIG.letreiro.faixaMultiplicador;
+  const th050 = 0.50 * mult;
+  const th070 = 0.70 * mult;
+  const th100 = 1.00 * mult;
+
+  if(totalArea <= th050){
+    valorAposMinimoArea = CONFIG.letreiro.faixas["0.50"];
+    minimoAreaAplicado = true;
+    minimoAreaValor = valorAposMinimoArea;
+    minimoAreaMotivo = `Faixa até 0,50m (0,50 x ${mult.toFixed(2)})`;
+  }else if(totalArea <= th070){
+    valorAposMinimoArea = CONFIG.letreiro.faixas["0.70"];
+    minimoAreaAplicado = true;
+    minimoAreaValor = valorAposMinimoArea;
+    minimoAreaMotivo = `Faixa até 0,70m (0,70 x ${mult.toFixed(2)})`;
+  }else if(totalArea <= th100){
+    valorAposMinimoArea = CONFIG.letreiro.faixas["1.00"];
+    minimoAreaAplicado = true;
+    minimoAreaValor = valorAposMinimoArea;
+    minimoAreaMotivo = `Faixa até 1,00m (1,00 x ${mult.toFixed(2)})`;
+  }
+
+  let descontoPercent = 0;
+  if(aplicarDesconto){
+    if(totalArea>=4) descontoPercent = CONFIG.letreiro.descontos["4"];
+    else if(totalArea>=3) descontoPercent = CONFIG.letreiro.descontos["3"];
+    else if(totalArea>=2) descontoPercent = CONFIG.letreiro.descontos["2"];
+    else if(totalArea>=1.5) descontoPercent = CONFIG.letreiro.descontos["1.5"];
+  }
+
+  const valorAntesDesconto = valorAposMinimoArea;
+  let valorAposDesconto = valorAntesDesconto;
+  if(descontoPercent > 0) valorAposDesconto = valorAntesDesconto * (1 - descontoPercent);
+
+  let valorFinalBase = valorAposDesconto;
+  let minimoAbsolutoAplicado = false;
+  if(valorFinalBase < valorMinimo){
+    valorFinalBase = valorMinimo;
+    minimoAbsolutoAplicado = true;
+  }
+
+  dadosUltimoCalculo = {
+    produtoNome: "Letreiro Iluminado por Dentro",
+    medidas: listaMedidas,
+    area: totalArea,
+    valorBase: valorFinalBase,
+    valorFinal: valorFinalBase
+  };
+
+  const regraPecasTxt = `Peça 01 sem acréscimo; Peça 02+ com +${Math.round(acrescimoPecaExtraCfg*100)}%`;
+  const letrasTxt = letrasPequenasAtivo ? `Ativo (+${Math.round(letrasPequenasPercent*100)}% nas peças menores)` : "Não aplicado";
+  const descontoTxt = (descontoPercent > 0) ? `${Math.round(descontoPercent*100)}%` : "Não aplicado";
+  const minimoFaixaTxt = minimoAreaAplicado ? `Sim (→ R$ ${minimoAreaValor.toFixed(2)})` : "Não aplicado";
+  const minimoAbsTxt = minimoAbsolutoAplicado ? `Sim (→ R$ ${valorMinimo.toFixed(2)})` : "Não aplicado";
+
+  let blocoComposicao = `
+    <div class="costWrap">
+      <div class="costTitle">Composição de Custos (para o vendedor)</div>
+
+      <div class="costGrid">
+        <div class="costCard">
+          <div class="k">Custo por m²</div>
+          <div class="v">R$ ${valorM2.toFixed(2)}</div>
+          <div class="s">Base do cálculo: área (m²) x custo por m².</div>
+        </div>
+
+        <div class="costCard">
+          <div class="k">Subtotal calculado</div>
+          <div class="v">R$ ${valorAntesMinimoArea.toFixed(2)}</div>
+          <div class="s">Somatório das peças (com regras de peça adicional e letras pequenas, se aplicadas).</div>
+        </div>
+
+        <div class="costCard">
+          <div class="k">Regras aplicadas</div>
+          <div class="v">Peças / Letras</div>
+          <div class="s">Peças: ${regraPecasTxt}<br>Letras pequenas: ${letrasTxt}</div>
+        </div>
+
+        <div class="costCard">
+          <div class="k">Ajustes finais</div>
+          <div class="v">Mínimos / Desconto</div>
+          <div class="s">Mínimo por faixa: ${minimoFaixaTxt}<br>Desconto metragem: ${descontoTxt}<br>Mínimo absoluto: ${minimoAbsTxt}</div>
+        </div>
+      </div>
+
+      <details class="costDetails">
+        <summary>Ver detalhes por peça</summary>
+        <div class="costBody">
+          <div class="costScroll">
+            ${composicaoLinhas}
+          </div>
+        </div>
+      </details>
+
+      <details class="costDetails">
+        <summary>Ver regras, mínimos e desconto</summary>
+        <div class="costBody">
+          <div class="costScroll">
+            <b>Subtotal calculado (antes de mínimos/descontos):</b> R$ ${valorAntesMinimoArea.toFixed(2)}
+            <div class="costHr"></div>
+
+            <b>Regra de custo mínimo por faixa:</b><br>
+            • Até 0,50m → R$ ${CONFIG.letreiro.faixas["0.50"].toFixed(2)}<br>
+            • Até 0,70m → R$ ${CONFIG.letreiro.faixas["0.70"].toFixed(2)}<br>
+            • Até 1,00m → R$ ${CONFIG.letreiro.faixas["1.00"].toFixed(2)}<br>
+            • Acima disso → R$ ${valorM2.toFixed(2)}/m²<br><br>
+
+            <b>Custo mínimo por faixa:</b> ${minimoAreaAplicado ? `aplicado (${minimoAreaMotivo})` : "não aplicado"}<br>
+            <b>Valor após regra de faixa:</b> R$ ${valorAntesDesconto.toFixed(2)}<br><br>
+
+            <b>Desconto por metragem:</b> ${descontoPercent > 0 ? `${Math.round(descontoPercent*100)}%` : "não aplicado"}<br>
+            <b>Valor após desconto:</b> R$ ${valorAposDesconto.toFixed(2)}<br><br>
+
+            <b>Mínimo absoluto:</b> ${minimoAbsolutoAplicado ? `aplicado (R$ ${valorMinimo.toFixed(2)})` : "não aplicado"}<br>
+            <div class="costHr"></div>
+            <b>VALOR BASE FINAL:</b> R$ ${valorFinalBase.toFixed(2)}
+          </div>
+        </div>
+      </details>
+    </div>
+  `;
+
+  document.getElementById("modalContent").innerHTML = `
+    <div class="marcaTopo">
+      <div class="marcaLogo">OZ</div>
+      <div class="marcaTexto">
+        <div class="nome">OZ MÍDIA</div>
+        <div class="sub">Comunicação Visual</div>
+      </div>
+    </div>
+
+    <h3 style="text-align:center;">Resumo do Pedido</h3>
+    ${resumo}
+    Área Total: ${totalArea.toFixed(2)} m²<br>
+    Valor Base: R$ ${valorFinalBase.toFixed(2)}<br><br>
+
+    ${blocoComposicao}
+
+    <br>
+    <label><input type="checkbox" id="borda"> Borda Branca (+10%)</label><br>
+    <label><input type="checkbox" id="led"> Sem LED (-10%)</label><br><br>
+
+    <p class="atencao">ATENÇÃO: Calcule o frete e acrescente de 10 a 20%.</p>
+
+    <hr style="opacity:0.2;">
+
+    <h3>Forma de Pagamento</h3>
+    <label><input type="radio" name="pagamento" value="avista" checked> À Vista</label><br>
+    <label><input type="radio" name="pagamento" value="parcelado"> Cartão</label><br><br>
+
+    <select id="parcelas">
+      <option value="1">1x (0%)</option>
+      <option value="2">2x (0%)</option>
+      <option value="3">3x (7,01%)</option>
+      <option value="4">4x (7,91%)</option>
+      <option value="5">5x (8,80%)</option>
+      <option value="6">6x (9,67%)</option>
+      <option value="7">7x (12,59%)</option>
+      <option value="8">8x (13,42%)</option>
+      <option value="9">9x (14,25%)</option>
+      <option value="10">10x (15,06%)</option>
+      <option value="11">11x (15,87%)</option>
+      <option value="12">12x (16,66%)</option>
+    </select>
+
+    <div class="grupoBotoes">
+      <button onclick="gerarValor(${valorFinalBase})">Gerar Valor de Venda</button>
+      <button onclick="abrirOrcamento()">Gerar Orçamento (copia e cola)</button>
+    </div>
+
+    <h3 id="resultadoFinal" style="margin-top:12px;"></h3>
+    <div class="grupoBotoes">
+      <button onclick="fechar()">Fechar</button>
+    </div>
+  `;
+
+  document.getElementById("modal").style.display="flex";
+  requestAnimationFrame(()=>aplicarFitModal("modal"));
+}
+
+/* =========================================================
+   ADESIVO - UI material
+========================================================= */
+function onChangeMaterialAdesivo(){
+  const material = document.getElementById("adesivoMaterial").value;
+  const wrapRecorte = document.getElementById("wrapRecorte");
+  const chkRecorte = document.getElementById("adesivoRecorte");
+
+  if(material === "transfer"){
+    chkRecorte.checked = false;
+    wrapRecorte.classList.add("chkDisabled");
+  }else{
+    wrapRecorte.classList.remove("chkDisabled");
+  }
+}
+
+/* =========================================================
+   ADESIVO - TIPO
+========================================================= */
+function toggleAdesivoTipo(){
+  const tipo = document.getElementById("adesivoTipo").value;
+  document.getElementById("boxAdesivoMetro").style.display = (tipo === "metro") ? "block" : "none";
+  document.getElementById("boxAdesivoUnidade").style.display = (tipo === "unidade") ? "block" : "none";
+}
+
+/* =========================================================
+   TRANSFER MODAL (NOVO)
+========================================================= */
+let _transferPending = null; // guarda dados pro cálculo depois
+function abrirTransferModal(pending){
+  _transferPending = pending || null;
+
+  // reset UI
+  const radioSim = document.querySelector('input[name="transferTemCor"][value="sim"]');
+  const radioNao = document.querySelector('input[name="transferTemCor"][value="nao"]');
+  if(radioSim && radioNao){
+    radioSim.checked = true;
+    radioNao.checked = false;
+  }
+  document.getElementById("transferCampos").style.display = "none";
+  document.getElementById("transferPrecoM2").value = "";
+  document.getElementById("transferMotoboy").value = "";
+
+  document.getElementById("transferModal").style.display = "flex";
+  requestAnimationFrame(()=>aplicarFitModal("transferModal"));
+}
+function fecharTransferModal(){
+  document.getElementById("transferModal").style.display = "none";
+}
+function toggleTransferTemCor(){
+  const tem = document.querySelector('input[name="transferTemCor"]:checked').value === "sim";
+  document.getElementById("transferCampos").style.display = tem ? "none" : "block";
+  requestAnimationFrame(()=>aplicarFitModal("transferModal"));
+}
+function confirmarTransfer(){
+  const tem = document.querySelector('input[name="transferTemCor"]:checked').value === "sim";
+
+  if(tem){
+    fecharTransferModal();
+    // segue orçamento normal (tabela fixa)
+    calcularAdesivo({ bypassTransfer: true });
+    return;
+  }
+
+  const precoM2 = parseFloat(document.getElementById("transferPrecoM2").value);
+  const motoboy = parseFloat(document.getElementById("transferMotoboy").value);
+
+  if(!precoM2 || precoM2 <= 0){
+    alert("Informe o valor do m² do adesivo (Transfer).");
+    return;
+  }
+  if(isNaN(motoboy) || motoboy < 0){
+    alert("Informe o frete do motoboy (pode ser 0).");
+    return;
+  }
+
+  fecharTransferModal();
+  calcularAdesivo({ bypassTransfer: true, transferCustom: { precoM2, motoboy } });
+}
+
+/* =========================================================
+   ADESIVO - CÁLCULO
+========================================================= */
+function calcularAdesivo(opts){
+  opts = opts || {};
+  const tipo = document.getElementById("adesivoTipo").value;
+  const material = document.getElementById("adesivoMaterial").value; /* branco | transparente | transfer */
+  const terceirizado = document.getElementById("adesivoTerceirizado").checked;
+
+  // transfer não usa recorte
+  let recorte = document.getElementById("adesivoRecorte").checked;
+  if(material === "transfer") recorte = false;
+
+  // ✅ se for transfer e ainda não passou pelo modal, abre modal e para
+  if(material === "transfer" && !opts.bypassTransfer){
+    abrirTransferModal();
+    return;
+  }
+
+  let precoM2 = 0;
+  let minimo = 0;
+
+  // custo extra do motoboy (somente quando "não tem a cor")
+  let custoExtraMotoboy = 0;
+  let usouCustomTransfer = false;
+
+  if(material === "transfer"){
+    // tabela fixa
+    if(terceirizado){
+      precoM2 = CONFIG.adesivo.transfer.terceirizadoM2;
+      minimo  = CONFIG.adesivo.transfer.minimoTerceirizado;
+    }else{
+      precoM2 = CONFIG.adesivo.transfer.padraoM2;
+      minimo  = CONFIG.adesivo.transfer.minimo;
+    }
+
+    // se veio custom (não tem a cor)
+    if(opts.transferCustom && typeof opts.transferCustom === "object"){
+      const p = parseFloat(opts.transferCustom.precoM2);
+      const m = parseFloat(opts.transferCustom.motoboy);
+      if(!isNaN(p) && p > 0) precoM2 = p;
+      if(!isNaN(m) && m >= 0) custoExtraMotoboy = m;
+      usouCustomTransfer = true;
+    }
+  }else if(material === "transparente"){
+    const blocoT = CONFIG.adesivo.transparente;
+
+    if(terceirizado){
+      precoM2 = recorte ? blocoT.terceirizado.comRecorte : blocoT.terceirizado.semRecorte;
+      minimo  = recorte ? blocoT.minimoTerceirizado.comRecorte : blocoT.minimoTerceirizado.semRecorte;
+    }else{
+      precoM2 = recorte ? blocoT.padrao.comRecorte : blocoT.padrao.semRecorte;
+      minimo  = recorte ? blocoT.minimo.comRecorte : blocoT.minimo.semRecorte;
+    }
+  }else{
+    // branco leitoso
+    if(terceirizado){
+      precoM2 = recorte ? CONFIG.adesivo.terceirizado.comRecorte : CONFIG.adesivo.terceirizado.semRecorte;
+      minimo  = recorte ? CONFIG.adesivo.minimoTerceirizado.comRecorte : CONFIG.adesivo.minimoTerceirizado.semRecorte;
+    }else{
+      precoM2 = recorte ? CONFIG.adesivo.padrao.comRecorte : CONFIG.adesivo.padrao.semRecorte;
+      minimo  = recorte ? CONFIG.adesivo.minimo.comRecorte : CONFIG.adesivo.minimo.semRecorte;
+    }
+  }
+
+  let areaTotal = 0;
+  let resumo = "";
+  let itensTexto = [];
+
+  if(tipo === "metro"){
+    const larg = parseFloat(document.getElementById("adesivoLargM").value);
+    const alt  = parseFloat(document.getElementById("adesivoAltM").value);
+    let qtd = parseInt(document.getElementById("adesivoQtdMetro").value, 10);
+    if(isNaN(qtd) || qtd <= 0) qtd = 1;
+
+    if(!larg || !alt){ alert("Preencha largura e altura"); return; }
+
+    areaTotal = (larg * alt) * qtd;
+
+    resumo += `<div class="pecaTitulo">Adesivo por m²</div>`;
+    resumo += `${larg}m x ${alt}m  •  Qtd: ${qtd}<br>`;
+    resumo += `Área Total: ${areaTotal.toFixed(2)} m²<br><br>`;
+
+    itensTexto.push(`▪ Adesivo: ${larg}m x ${alt}m • Qtd: ${qtd}`);
+
+  }else{
+    const largCm = parseFloat(document.getElementById("adesivoLargCm").value);
+    const altCm  = parseFloat(document.getElementById("adesivoAltCm").value);
+    const qtd    = parseInt(document.getElementById("adesivoQtdUni").value, 10);
+
+    if(!largCm || !altCm || !qtd){ alert("Preencha largura, altura e quantidade"); return; }
+
+    const areaUnidadeM2 = (largCm/100) * (altCm/100);
+    areaTotal = areaUnidadeM2 * qtd;
+
+    resumo += `<div class="pecaTitulo">Adesivo por Unidade (cm)</div>`;
+    resumo += `${largCm}cm x ${altCm}cm  •  Qtd: ${qtd}<br>`;
+    resumo += `<span class="info">Área calculada: ${largCm}cm x ${altCm}cm (sem margem)</span><br><br>`;
+    resumo += `Área Total (convertida): ${areaTotal.toFixed(3)} m²<br><br>`;
+
+    itensTexto.push(`▪ Adesivo: ${largCm}cm x ${altCm}cm • Qtd: ${qtd}`);
+  }
+
+  const valorBaseCalc = areaTotal * precoM2;
+
+  // ✅ mínimo aplicado no cálculo do serviço/material
+  const minimoAplicado = (valorBaseCalc < minimo);
+  let valorBaseServico = minimoAplicado ? minimo : valorBaseCalc;
+
+  // ✅ frete do motoboy (somente quando transfer custom) soma depois do mínimo
+  let valorBase = valorBaseServico + custoExtraMotoboy;
+
+  const materialNome =
+    (material === "transparente") ? "Transparente" :
+    (material === "transfer") ? "Cor Única com Transfer" :
+    "Branco Leitoso";
+
+  const nomeProduto =
+    `Adesivo ${materialNome}` +
+    (recorte ? " com Recorte" : "") +
+    (terceirizado ? " (Terceirizado)" : "");
+
+  // item extra no orçamento para o vendedor enxergar
+  if(usouCustomTransfer){
+    itensTexto.push(`▪ Extra: Motoboy p/ buscar material: R$ ${custoExtraMotoboy.toFixed(2)}`);
+  }
+
+  dadosUltimoCalculo = {
+    produtoNome: nomeProduto,
+    medidas: itensTexto,
+    area: areaTotal,
+    valorBase: valorBase,
+    valorFinal: valorBase
+  };
+
+  const tipoTxt = (tipo === "metro") ? "Por m²" : "Por Unidade (cm)";
+  const recorteTxt = recorte ? "Sim (+recorte)" : "Não";
+  const tercTxt = terceirizado ? "Sim" : "Não";
+
+  const extraLinha = (usouCustomTransfer)
+    ? `<b>Motoboy (extra):</b> R$ ${custoExtraMotoboy.toFixed(2)}<br>`
+    : ``;
+
+  const infoCustom = (material === "transfer" && usouCustomTransfer)
+    ? `<span class="info">Obs: Sem cor em estoque → preço m² informado + motoboy.</span><br><br>`
+    : ``;
+
+  document.getElementById("modalContent").innerHTML = `
+    <div class="marcaTopo">
+      <div class="marcaLogo">OZ</div>
+      <div class="marcaTexto">
+        <div class="nome">OZ MÍDIA</div>
+        <div class="sub">Comunicação Visual</div>
+      </div>
+    </div>
+
+    <h3 style="text-align:center;">Resumo do Pedido</h3>
+    ${resumo}
+    ${infoCustom}
+
+    <div class="bloco info" style="margin-top:10px;">
+      <b>Material:</b> ${materialNome}<br>
+      <b>Tipo:</b> ${tipoTxt}<br>
+      <b>Recorte:</b> ${recorteTxt}${material === "transfer" ? " (não aplicável)" : ""}<br>
+      <b>Cliente terceirizado:</b> ${tercTxt}<br>
+      <b>Preço por m²:</b> R$ ${precoM2.toFixed(2)}<br>
+      <b>Área total:</b> ${areaTotal.toFixed(3)} m²<br>
+      <hr style="opacity:0.2;">
+      <b>Valor Base (antes do mínimo):</b> R$ ${valorBaseCalc.toFixed(2)}<br>
+      <b>Valor mínimo:</b> R$ ${minimo.toFixed(2)}${minimoAplicado ? " (aplicado)" : ""}<br>
+      ${extraLinha}
+      <hr style="opacity:0.2;">
+      <b>Valor Final Base:</b> R$ ${valorBase.toFixed(2)}
+    </div>
+
+    <p class="atencao">ATENÇÃO: Calcule o frete e acrescente de 10 a 20%.</p>
+
+    <hr style="opacity:0.2;">
+
+    <h3>Forma de Pagamento</h3>
+    <label><input type="radio" name="pagamento" value="avista" checked> À Vista</label><br>
+    <label><input type="radio" name="pagamento" value="parcelado"> Cartão</label><br><br>
+
+    <select id="parcelas">
+      <option value="1">1x (0%)</option>
+      <option value="2">2x (0%)</option>
+      <option value="3">3x (7,01%)</option>
+      <option value="4">4x (7,91%)</option>
+      <option value="5">5x (8,80%)</option>
+      <option value="6">6x (9,67%)</option>
+      <option value="7">7x (12,59%)</option>
+      <option value="8">8x (13,42%)</option>
+      <option value="9">9x (14,25%)</option>
+      <option value="10">10x (15,06%)</option>
+      <option value="11">11x (15,87%)</option>
+      <option value="12">12x (16,66%)</option>
+    </select>
+
+    <div class="grupoBotoes">
+      <button onclick="gerarValor(${valorBase})">Gerar Valor de Venda</button>
+      <button onclick="abrirOrcamento()">Gerar Orçamento (copia e cola)</button>
+    </div>
+
+    <h3 id="resultadoFinal" style="margin-top:12px;"></h3>
+    <div class="grupoBotoes">
+      <button onclick="fechar()">Fechar</button>
+    </div>
+  `;
+
+  document.getElementById("modal").style.display="flex";
+  requestAnimationFrame(()=>aplicarFitModal("modal"));
+}
+
+/* =========================================================
+   VALOR DE VENDA
+========================================================= */
+function gerarValor(valor){
+  let total = valor;
+
+  const bordaEl = document.getElementById("borda");
+  const ledEl = document.getElementById("led");
+  if(bordaEl && bordaEl.checked) total *= 1.10;
+  if(ledEl && ledEl.checked) total *= 0.90;
+
+  let pagamento = document.querySelector('input[name="pagamento"]:checked').value;
+  let resultadoHTML = "";
+
+  if(pagamento=="avista"){
+    dadosUltimoCalculo.valorFinal = total;
+    dadosUltimoCalculo.pagamento = pagamento;
+    resultadoHTML = `<div style="color:yellow;font-weight:bold;">Valor à Vista: R$ ${total.toFixed(2)}</div>`;
+  }
+
+  if(pagamento=="parcelado"){
+    let taxas = {1:0,2:0,3:7.01,4:7.91,5:8.80,6:9.67,7:12.59,8:13.42,9:14.25,10:15.06,11:15.87,12:16.66};
+    let parcelas = document.getElementById("parcelas").value;
+    let taxa = taxas[parcelas];
+    let valorFinal = total + (total*(taxa/100));
+
+    dadosUltimoCalculo.valorFinal = valorFinal;
+    dadosUltimoCalculo.pagamento = pagamento;
+    dadosUltimoCalculo.parcelas = parcelas;
+
+    resultadoHTML = `<div style="color:yellow;font-weight:bold;">${parcelas}x de R$ ${(valorFinal/parcelas).toFixed(2)}</div>
+    <div style="color:yellow;font-weight:bold;">Total Parcelado: R$ ${valorFinal.toFixed(2)}</div>`;
+  }
+
+  document.getElementById("resultadoFinal").innerHTML = resultadoHTML;
+  requestAnimationFrame(()=>aplicarFitModal("modal"));
+}
+
+/* =========================================================
+   ORÇAMENTO (TEXTO)
+========================================================= */
+function abrirOrcamento(){
+  document.getElementById("orcamentoModal").style.display="flex";
+  requestAnimationFrame(()=>aplicarFitModal("orcamentoModal"));
+}
+
+function gerarTextoOrcamento(){
+  let frete = parseFloat(document.getElementById("freteValor").value) || 0;
+
+  let prazoNumero = parseInt(document.getElementById("prazoProducao").value, 10);
+  let prazo = (!isNaN(prazoNumero) && prazoNumero > 0) ? `${prazoNumero} dias` : `-`;
+
+  let pagamento = dadosUltimoCalculo.pagamento || "avista";
+  let valorFinal = dadosUltimoCalculo.valorFinal || dadosUltimoCalculo.valorBase || 0;
+  let totalComFrete = valorFinal + frete;
+
+  const nomeProduto = dadosUltimoCalculo.produtoNome || "Letreiro Iluminado por Dentro";
+
+  let texto = ``;
+
+  texto += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+  texto += `✨ ORÇAMENTO ✨\n\n`;
+  texto += `📌 ${nomeProduto}\n\n`;
+
+  texto += `📐 Detalhamento:\n`;
+  const itens = (dadosUltimoCalculo.medidas && Array.isArray(dadosUltimoCalculo.medidas)) ? dadosUltimoCalculo.medidas : [];
+  if(itens.length){
+    itens.forEach((m,i)=>{
+      texto += `▪ Item ${i+1}: ${m}\n`;
+    });
+  }else{
+    texto += `▪ -\n`;
+  }
+
+  if(typeof dadosUltimoCalculo.area === "number"){
+    texto += `\n📊 Metragem Total: ${dadosUltimoCalculo.area.toFixed(2)} m²\n`;
+  }else{
+    texto += `\n📊 Metragem Total: -\n`;
+  }
+
+  if(pagamento === "parcelado"){
+    let parcelas = dadosUltimoCalculo.parcelas || 1;
+    let valorParcela = valorFinal / parcelas;
+
+    texto += `💳 Forma de Pagamento: Cartão\n`;
+    texto += `💰 ${parcelas}x de R$ ${valorParcela.toFixed(2)}\n`;
+    texto += `💰 Total Parcelado: R$ ${valorFinal.toFixed(2)}\n`;
+  } else {
+    texto += `💳 Forma de Pagamento: À Vista\n`;
+    texto += `💰 Valor do Pedido: R$ ${valorFinal.toFixed(2)}\n`;
+  }
+
+  texto += `🚚 Frete: R$ ${frete.toFixed(2)}\n`;
+  texto += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+  texto += `💎 Total com Frete: R$ ${totalComFrete.toFixed(2)}\n\n`;
+
+  texto += `⏳ Prazo de Produção: ${prazo}\n\n`;
+  texto += `🚀 Produção com acabamento premium e alto impacto.\n`;
+  texto += `⭐ Material profissional com excelente durabilidade.\n\n`;
+  texto += `📲 Aguardamos o seu retorno para o fechamento do pedido. Qualquer dúvida é só nos chamar!`;
+
+  document.getElementById("textoOrcamento").value = texto;
+  requestAnimationFrame(()=>aplicarFitModal("orcamentoModal"));
+}
+
+async function copiarTexto(){
+  const textarea = document.getElementById("textoOrcamento");
+  const texto = textarea.value || "";
+
+  if(!texto.trim()){
+    alert("Não há texto para copiar. Clique em 'Gerar Texto' primeiro.");
+    return;
+  }
+
+  try{
+    await navigator.clipboard.writeText(texto);
+    alert("Texto copiado com sucesso!");
+  }catch(e){
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    alert("Texto copiado com sucesso!");
+  }
+}
+
+/* =========================================================
+   FECHAR MODAIS
+========================================================= */
+function fechar(){ document.getElementById("modal").style.display="none"; }
+function fecharOrcamento(){ document.getElementById("orcamentoModal").style.display="none"; }
+
+/* =========================================================
+   INIT
+========================================================= */
+(function init(){
+  letrasPequenasPercent = CONFIG.letreiro.letrasPequenasPadrao;
+})();
+</script>
+</body>
+</html>
