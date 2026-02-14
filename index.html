@@ -36,6 +36,109 @@ body{
   padding: 22px;
 }
 
+/* ===== LOGIN (SENHA) ===== */
+.loginOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 18px;
+  z-index: 99999;
+}
+.loginBox{
+  width: 100%;
+  max-width: 520px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.loginTop{
+  padding: 18px 18px 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.06), transparent);
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+.loginIcon{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255,215,0,0.14);
+  border: 1px solid rgba(255,215,0,0.24);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  letter-spacing: .5px;
+  color: #ffd700;
+}
+.loginTitleWrap{ line-height: 1.2; }
+.loginTitle{
+  margin:0;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .3px;
+}
+.loginSub{
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.loginBody{
+  padding: 16px 18px 18px 18px;
+  display:flex;
+  flex-direction:column;
+  gap: 12px;
+}
+.loginBody input{
+  width:100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.30);
+  color: var(--text);
+  outline: none;
+}
+.loginBody input::placeholder{ color: rgba(255,255,255,0.45); }
+
+.loginActions{
+  display:flex;
+  gap: 10px;
+  flex-wrap:wrap;
+}
+.loginBtn{
+  flex:1;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #4f7cff;
+  color:#fff;
+  font-weight: 900;
+  cursor:pointer;
+}
+.loginBtn:hover{ background:#3d67e6; }
+
+.loginHint{
+  font-size: 12px;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.25;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.loginErr{
+  display:none;
+  font-size: 12px;
+  color: #ff7a7a;
+  font-weight: 900;
+}
+
 /* ===== HOME (MENU) ===== */
 .home{
   width: 100%;
@@ -113,6 +216,17 @@ body{
   cursor:pointer;
 }
 .btnAdmin:hover{ background: rgba(79,124,255,0.20); }
+
+.btnSair{
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,77,77,0.45);
+  background: rgba(255,77,77,0.18);
+  color:#ffd0d0;
+  font-weight: 900;
+  cursor:pointer;
+}
+.btnSair:hover{ background: rgba(255,77,77,0.26); }
 
 .searchBox{
   padding: 16px 22px 18px 22px;
@@ -567,8 +681,31 @@ textarea{
 
 <body>
 
+<!-- ✅ LOGIN -->
+<div class="loginOverlay" id="loginOverlay" aria-modal="true" role="dialog">
+  <div class="loginBox">
+    <div class="loginTop">
+      <div class="loginIcon">OZ</div>
+      <div class="loginTitleWrap">
+        <h2 class="loginTitle">Acesso restrito</h2>
+        <p class="loginSub">Digite a senha para abrir o sistema.</p>
+      </div>
+    </div>
+    <div class="loginBody">
+      <div class="loginHint">🔒 Este conteúdo é protegido por senha (uso interno).</div>
+      <label style="font-weight:900;">Senha</label>
+      <input id="senhaInput" type="password" placeholder="Digite a senha..." autocomplete="current-password" />
+      <div class="loginErr" id="loginErr">Senha incorreta. Tente novamente.</div>
+      <div class="loginActions">
+        <button class="loginBtn" onclick="validarSenha()">Entrar</button>
+      </div>
+      <div class="loginHint" style="opacity:.85;">Dica: pressione <b>Enter</b> para entrar.</div>
+    </div>
+  </div>
+</div>
+
 <!-- HOME PROFISSIONAL -->
-<section class="home" id="home">
+<section class="home" id="home" style="display:none;">
   <div class="homeTop">
     <div class="brand">
       <div class="brandIcon">OZ</div>
@@ -579,6 +716,7 @@ textarea{
     </div>
     <div class="homeActions">
       <button class="btnAdmin" onclick="abrirAdmin()">Acessar Painel Administrativo</button>
+      <button class="btnSair" onclick="logout()">Sair</button>
       <div class="badge">Versão: 1.0</div>
       <div class="badge">100% Responsivo</div>
     </div>
@@ -1038,6 +1176,57 @@ textarea{
 </div>
 
 <script>
+/* =========================================================
+   ✅ LOGIN / SENHA
+   (OBS: em site estático, isso é “bloqueio” e não segurança real)
+========================================================= */
+const OZ_SENHA = "1010@";
+const OZ_AUTH_KEY = "OZ_AUTH_OK";
+
+function showApp(){
+  document.getElementById("loginOverlay").style.display = "none";
+  document.getElementById("home").style.display = "block";
+  window.scrollTo(0,0);
+}
+
+function showLogin(){
+  document.getElementById("home").style.display = "none";
+  document.getElementById("calcLetraInterna").style.display = "none";
+  document.getElementById("calcAdesivo").style.display = "none";
+  document.getElementById("adminPanel").style.display = "none";
+
+  document.getElementById("loginOverlay").style.display = "flex";
+  const inp = document.getElementById("senhaInput");
+  inp.value = "";
+  document.getElementById("loginErr").style.display = "none";
+  setTimeout(()=>inp.focus(), 50);
+}
+
+function validarSenha(){
+  const v = (document.getElementById("senhaInput").value || "");
+  if(v === OZ_SENHA){
+    localStorage.setItem(OZ_AUTH_KEY, "1");
+    showApp();
+  }else{
+    document.getElementById("loginErr").style.display = "block";
+  }
+}
+
+function logout(){
+  localStorage.removeItem(OZ_AUTH_KEY);
+  showLogin();
+}
+
+document.addEventListener("keydown", (e)=>{
+  const overlay = document.getElementById("loginOverlay");
+  if(overlay && overlay.style.display !== "none"){
+    if(e.key === "Enter"){
+      e.preventDefault();
+      validarSenha();
+    }
+  }
+});
+
 /* =========================================================
    FIT MODAL - CABER NA TELA SEM ROLAGEM
 ========================================================= */
@@ -1610,11 +1799,10 @@ function toggleAdesivoTipo(){
 /* =========================================================
    TRANSFER MODAL (NOVO)
 ========================================================= */
-let _transferPending = null; // guarda dados pro cálculo depois
+let _transferPending = null;
 function abrirTransferModal(pending){
   _transferPending = pending || null;
 
-  // reset UI
   const radioSim = document.querySelector('input[name="transferTemCor"][value="sim"]');
   const radioNao = document.querySelector('input[name="transferTemCor"][value="nao"]');
   if(radioSim && radioNao){
@@ -1641,7 +1829,6 @@ function confirmarTransfer(){
 
   if(tem){
     fecharTransferModal();
-    // segue orçamento normal (tabela fixa)
     calcularAdesivo({ bypassTransfer: true });
     return;
   }
@@ -1668,14 +1855,12 @@ function confirmarTransfer(){
 function calcularAdesivo(opts){
   opts = opts || {};
   const tipo = document.getElementById("adesivoTipo").value;
-  const material = document.getElementById("adesivoMaterial").value; /* branco | transparente | transfer */
+  const material = document.getElementById("adesivoMaterial").value;
   const terceirizado = document.getElementById("adesivoTerceirizado").checked;
 
-  // transfer não usa recorte
   let recorte = document.getElementById("adesivoRecorte").checked;
   if(material === "transfer") recorte = false;
 
-  // ✅ se for transfer e ainda não passou pelo modal, abre modal e para
   if(material === "transfer" && !opts.bypassTransfer){
     abrirTransferModal();
     return;
@@ -1684,12 +1869,10 @@ function calcularAdesivo(opts){
   let precoM2 = 0;
   let minimo = 0;
 
-  // custo extra do motoboy (somente quando "não tem a cor")
   let custoExtraMotoboy = 0;
   let usouCustomTransfer = false;
 
   if(material === "transfer"){
-    // tabela fixa
     if(terceirizado){
       precoM2 = CONFIG.adesivo.transfer.terceirizadoM2;
       minimo  = CONFIG.adesivo.transfer.minimoTerceirizado;
@@ -1698,7 +1881,6 @@ function calcularAdesivo(opts){
       minimo  = CONFIG.adesivo.transfer.minimo;
     }
 
-    // se veio custom (não tem a cor)
     if(opts.transferCustom && typeof opts.transferCustom === "object"){
       const p = parseFloat(opts.transferCustom.precoM2);
       const m = parseFloat(opts.transferCustom.motoboy);
@@ -1717,7 +1899,6 @@ function calcularAdesivo(opts){
       minimo  = recorte ? blocoT.minimo.comRecorte : blocoT.minimo.semRecorte;
     }
   }else{
-    // branco leitoso
     if(terceirizado){
       precoM2 = recorte ? CONFIG.adesivo.terceirizado.comRecorte : CONFIG.adesivo.terceirizado.semRecorte;
       minimo  = recorte ? CONFIG.adesivo.minimoTerceirizado.comRecorte : CONFIG.adesivo.minimoTerceirizado.semRecorte;
@@ -1767,11 +1948,9 @@ function calcularAdesivo(opts){
 
   const valorBaseCalc = areaTotal * precoM2;
 
-  // ✅ mínimo aplicado no cálculo do serviço/material
   const minimoAplicado = (valorBaseCalc < minimo);
   let valorBaseServico = minimoAplicado ? minimo : valorBaseCalc;
 
-  // ✅ frete do motoboy (somente quando transfer custom) soma depois do mínimo
   let valorBase = valorBaseServico + custoExtraMotoboy;
 
   const materialNome =
@@ -1784,7 +1963,6 @@ function calcularAdesivo(opts){
     (recorte ? " com Recorte" : "") +
     (terceirizado ? " (Terceirizado)" : "");
 
-  // item extra no orçamento para o vendedor enxergar
   if(usouCustomTransfer){
     itensTexto.push(`▪ Extra: Motoboy p/ buscar material: R$ ${custoExtraMotoboy.toFixed(2)}`);
   }
@@ -2012,9 +2190,12 @@ function fecharOrcamento(){ document.getElementById("orcamentoModal").style.disp
 ========================================================= */
 (function init(){
   letrasPequenasPercent = CONFIG.letreiro.letrasPequenasPadrao;
+
+  // ✅ checa se já está autenticado
+  const ok = localStorage.getItem(OZ_AUTH_KEY) === "1";
+  if(ok) showApp();
+  else showLogin();
 })();
 </script>
 </body>
 </html>
-
-
